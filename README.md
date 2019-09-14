@@ -20,3 +20,4 @@ Here's all you need to do to have your own site:
 * Everything is just html, css, and javascript! Edit things to your heart's content!
 * Templates are in `site/tempates`; they use the [Mustache](https://mustache.github.io/) template language.
 * You'll need to delete your `.shake` directory when you edit `Main.hs` to avoid stale build caches.
+* Slick is good at **updating** and **creating** files, but it doesn't delete stale files. When in doubt you can delete your whole output directory.
