@@ -3,5 +3,5 @@ resolver: lts-14.1
 packages:
 - .
 
-extra-deps: []
+extra-deps:
 - slick-1.0.0.0
