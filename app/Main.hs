@@ -1,4 +1,3 @@
-{-# LANGUAGE NamedFieldPuns        #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -10,45 +9,17 @@ import           Control.Monad
 import           Data.Aeson                 as A
 import           Data.Aeson.Lens
 import           Development.Shake
-import           Development.Shake.Classes
+import           Development.Shake.Classes (Binary)
 import           Development.Shake.Forward
 import           Development.Shake.FilePath
 import           GHC.Generics               (Generic)
 import           Slick
 
-import qualified Data.HashMap.Lazy as HML
 import qualified Data.Text                  as T
 
----Config-----------------------------------------------------------------------
-
-siteMeta :: SiteMeta
-siteMeta =
-    SiteMeta { siteAuthor = "Me"
-             , baseUrl = "https://example.com"
-             , siteTitle = "My Slick Site"
-             , twitterHandle = Just "myslickhandle"
-             , githubUser = Just "myslickgithubuser"
-             }
 
 outputFolder :: FilePath
 outputFolder = "docs/"
-
---Data models-------------------------------------------------------------------
-
-withSiteMeta :: Value -> Value
-withSiteMeta (Object obj) = Object $ HML.union obj siteMetaObj
-  where
-    Object siteMetaObj = toJSON siteMeta
-withSiteMeta _ = error "only add site meta to objects"
-
-data SiteMeta =
-    SiteMeta { siteAuthor    :: String
-             , baseUrl       :: String -- e.g. https://example.ca
-             , siteTitle     :: String
-             , twitterHandle :: Maybe String -- Without @
-             , githubUser    :: Maybe String
-             }
-    deriving (Generic, Eq, Ord, Show, ToJSON)
 
 -- | Data for the index page
 data IndexInfo =
@@ -72,7 +43,7 @@ buildIndex :: [Post] -> Action ()
 buildIndex posts' = do
   indexT <- compileTemplate' "site/templates/index.html"
   let indexInfo = IndexInfo {posts = posts'}
-      indexHTML = T.unpack $ substitute indexT (withSiteMeta $ toJSON indexInfo)
+      indexHTML = T.unpack $ substitute indexT (toJSON indexInfo)
   writeFile' (outputFolder </> "index.html") indexHTML
 
 -- | Find and build all posts
@@ -92,7 +63,7 @@ buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
   let postUrl = T.pack . dropDirectory1 $ srcPath -<.> "html"
       withPostUrl = _Object . at "url" ?~ String postUrl
   -- Add additional metadata we've been able to compute
-  let fullPostData = withSiteMeta . withPostUrl $ postData
+  let fullPostData = withPostUrl $ postData
   template <- compileTemplate' "site/templates/post.html"
   writeFile' (outputFolder </> T.unpack postUrl) . T.unpack $ substitute template fullPostData
   -- Convert the metadata into a Post object
@@ -114,6 +85,4 @@ buildRules = do
   copyStaticFiles
 
 main :: IO ()
-main = do
-  let shOpts = forwardOptions $ shakeOptions { shakeVerbosity = Chatty}
-  shakeArgsForward shOpts buildRules
+main = slick buildRules
