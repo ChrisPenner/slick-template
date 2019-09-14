@@ -1,0 +1,36 @@
+name:                slick-template
+version:             0.1.0.0
+github:              "Me/my-site"
+license:             BSD3
+author:              "Me"
+maintainer:          "example@example.com"
+copyright:           "20XX Me"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:            My site built with slick!
+category:            Slick-Site
+
+description: My slick Site
+
+executables:
+  build-site:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - base >= 4.7 && < 5
+    - shake
+    - slick
+    - text
+    - containers
+    - unordered-containers
+    - lens
+    - aeson
+    - lens-aeson

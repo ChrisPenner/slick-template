@@ -1,0 +1,22 @@
+<header>
+    <nav>
+        <a id="beacon" href="/">
+            <div id="home-text"> HOME </div>
+        </a>
+    </nav>
+
+    <div class="right-sidebar">
+        {{#githubUser}}
+        <a class="ext-link" href="https://github.com/{{githubUser}}">
+            <img src="/images/github-logo.png" alt="Github Profile"/>
+        </a>
+        {{/githubUser}}
+
+        {{#twitterHandle}}
+        <a class="ext-link" href="https://twitter.com/{{twitterHandle}}">
+            <img src="/images/twitter-logo.png" alt="Twitter Profile"/>
+        </a>
+        {{/twitterHandle}}
+    <div id="theme-button">DAY</div>
+    </div>
+</header>

@@ -1,0 +1,7 @@
+resolver: lts-14.1
+
+packages:
+- .
+
+extra-deps:
+- slick-0.2.0.0@sha256:f4c66d78ea0bf47dfcad23dee14a250f1ae21dfd1c79791901528ae13b6eda36,1581
