@@ -3,7 +3,14 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: slick-1.0.0.0@sha256:3139416cdc36e64ca87e79b4e1a9eb3c67cd02e83305916bf2d4bf7513dd3b11,1307
+    pantry-tree:
+      size: 601
+      sha256: 792dfdb3ab701760d954ceab020397135e1265b7126979cafe9b0edd8e586d6e
+  original:
+    hackage: slick-1.0.0.0
 snapshots:
 - completed:
     size: 523448
