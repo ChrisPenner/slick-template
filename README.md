@@ -21,7 +21,7 @@ If you want a quick tool for serving your file system during development I recom
 
 ```shell
 $ npm install -g serve
-serve dist
+$ serve docs
 ```
 
 Then navigate to the port which is serving (usually http://localhost:3000 or http://localhost:5000 )
