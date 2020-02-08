@@ -1,7 +1,7 @@
-resolver: lts-14.1
+resolver: lts-14.22
 
 packages:
 - .
 
 extra-deps:
-- slick-1.0.0.0
+- slick-1.0.1.1
