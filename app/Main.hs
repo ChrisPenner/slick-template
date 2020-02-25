@@ -114,5 +114,5 @@ buildRules = do
 
 main :: IO ()
 main = do
-  let shOpts = shakeOptions { shakeVerbosity = Chatty}
+  let shOpts = shakeOptions { shakeVerbosity = Chatty, shakeLintInside = ["\\"]}
   shakeArgsForward shOpts buildRules
