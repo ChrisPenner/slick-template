@@ -4,6 +4,10 @@ A cloneable template for building a static site with [slick](https://github.com/
 
 For an example of what the site will look like, check out [my blog](https://chrispenner.ca)!
 
+![my site](./site-example.png)
+
+Here's [the configuration](https://github.com/ChrisPenner/ChrisPenner.github.io/blob/site/app/Main.hs) for my site if you're curious.
+
 Get up and running with slick in no time! 
 
 Here's all you need to do to have your own site:
