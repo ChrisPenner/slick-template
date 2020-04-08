@@ -1,8 +1,8 @@
 {-# LANGUAGE NamedFieldPuns        #-}
-{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 module Main where
 
@@ -76,12 +76,12 @@ data Post =
     deriving (Generic, Eq, Ord, Show, FromJSON, ToJSON, Binary)
 
 data AtomData =
-  AtomData { title :: String
-           , domain :: String
-           , author :: String
-           , posts :: [Post]
-           , currentTime :: String
-           , atomUrl :: String } deriving (Generic, ToJSON, Eq, Ord, Show)
+  AtomData { title        :: String
+           , domain       :: String
+           , author       :: String
+           , posts        :: [Post]
+           , currentTime  :: String
+           , atomUrl      :: String } deriving (Generic, ToJSON, Eq, Ord, Show)
 
 -- | given a list of posts this will build a table of contents
 buildIndex :: [Post] -> Action ()
