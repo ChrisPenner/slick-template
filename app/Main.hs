@@ -1,7 +1,8 @@
 {-# LANGUAGE NamedFieldPuns        #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DeriveAnyClass        #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 module Main where
 
@@ -9,6 +10,7 @@ import           Control.Lens
 import           Control.Monad
 import           Data.Aeson                 as A
 import           Data.Aeson.Lens
+import           Data.Time
 import           Development.Shake
 import           Development.Shake.Classes
 import           Development.Shake.Forward
@@ -56,16 +58,30 @@ data IndexInfo =
     { posts :: [Post]
     } deriving (Generic, Show, FromJSON, ToJSON)
 
+-- | Data for tags
+data Tag =
+  Tag { tag :: String
+      } deriving (Generic, Show, FromJSON, ToJSON, Binary, Eq, Ord)
 -- | Data for a blog post
 data Post =
-    Post { title   :: String
-         , author  :: String
-         , content :: String
-         , url     :: String
-         , date    :: String
-         , image   :: Maybe String
+    Post { title       :: String
+         , author      :: String
+         , content     :: String
+         , url         :: String
+         , date        :: String
+         , tags        :: [Tag]
+         , description :: String
+         , image       :: Maybe String
          }
     deriving (Generic, Eq, Ord, Show, FromJSON, ToJSON, Binary)
+
+data AtomData =
+  AtomData { title :: String
+           , domain :: String
+           , author :: String
+           , posts :: [Post]
+           , currentTime :: String
+           , atomUrl :: String } deriving (Generic, ToJSON, Eq, Ord, Show)
 
 -- | given a list of posts this will build a table of contents
 buildIndex :: [Post] -> Action ()
@@ -104,12 +120,43 @@ copyStaticFiles = do
     void $ forP filepaths $ \filepath ->
         copyFileChanged ("site" </> filepath) (outputFolder </> filepath)
 
+formatDate :: String -> String
+formatDate humanDate = toIsoDate parsedTime
+  where
+    parsedTime =
+      parseTimeOrError True defaultTimeLocale "%b %e, %Y" humanDate :: UTCTime
+
+rfc3339 :: Maybe String
+rfc3339 = Just "%H:%M:SZ"
+
+toIsoDate :: UTCTime -> String
+toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
+
+buildFeed :: [Post] -> Action ()
+buildFeed posts = do
+  now <- liftIO getCurrentTime
+  let atomData =
+        AtomData
+          { title = "<site-title-here>"
+          , domain = "https://<your-domain-here>"
+          , author = "<author-name-here>"
+          , posts = mkAtomPost <$> posts
+          , currentTime = toIsoDate now
+          , atomUrl = "/atom.xml"
+          }
+  atomTempl <- compileTemplate' "site/templates/atom.xml"
+  writeFile' (outputFolder </> "atom.xml") . T.unpack $ substitute atomTempl (toJSON atomData)
+    where
+      mkAtomPost :: Post -> Post
+      mkAtomPost p = p { date = formatDate $ date p }
+
 -- | Specific build rules for the Shake system
 --   defines workflow to build the website
 buildRules :: Action ()
 buildRules = do
   allPosts <- buildPosts
   buildIndex allPosts
+  buildFeed allPosts
   copyStaticFiles
 
 main :: IO ()

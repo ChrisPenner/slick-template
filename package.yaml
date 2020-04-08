@@ -34,3 +34,4 @@ executables:
     - lens
     - aeson
     - lens-aeson
+    - time
