@@ -58,10 +58,8 @@ data IndexInfo =
     { posts :: [Post]
     } deriving (Generic, Show, FromJSON, ToJSON)
 
--- | Data for tags
-data Tag =
-  Tag { tag :: String
-      } deriving (Generic, Show, FromJSON, ToJSON, Binary, Eq, Ord)
+type Tag = String
+
 -- | Data for a blog post
 data Post =
     Post { title       :: String
@@ -137,9 +135,9 @@ buildFeed posts = do
   now <- liftIO getCurrentTime
   let atomData =
         AtomData
-          { title = "<site-title-here>"
-          , domain = "https://<your-domain-here>"
-          , author = "<author-name-here>"
+          { title = siteTitle siteMeta
+          , domain = baseUrl siteMeta
+          , author = siteAuthor siteMeta
           , posts = mkAtomPost <$> posts
           , currentTime = toIsoDate now
           , atomUrl = "/atom.xml"

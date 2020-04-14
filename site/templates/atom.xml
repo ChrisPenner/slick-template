@@ -15,7 +15,7 @@
       <id>{{domain}}{{url}}</id>
       <updated>{{date}}</updated>
       {{#tags}}
-      <category term="{{tag}}"/>
+      <category term="{{.}}"/>
       {{/tags}}
       <summary>{{description}}</summary>
       <content type="html"><![CDATA[{{{content}}}]]></content>
