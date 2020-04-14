@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head profile="http://www.w3.org/2005/10/profile">
     <meta charset="UTF-8">
     <meta name="description" content="{{siteTitle}}">
@@ -32,6 +32,11 @@
             <span class="date">{{date}}</span>
             <br>
             <div class="metadata">
+            </div>
+            <div class="tags">
+              {{#tags}}
+              <span class="tag {{.}}">{{.}}</span>
+              {{/tags}}
             </div>
         </div>
     </div>
