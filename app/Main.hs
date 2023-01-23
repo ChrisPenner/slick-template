@@ -1,4 +1,3 @@
-{-# LANGUAGE NamedFieldPuns        #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE OverloadedStrings     #-}
@@ -6,20 +5,25 @@
 
 module Main where
 
-import           Control.Lens
-import           Control.Monad
-import           Data.Aeson                 as A
-import           Data.Aeson.Lens
-import           Data.Time
-import           Development.Shake
-import           Development.Shake.Classes
-import           Development.Shake.Forward
-import           Development.Shake.FilePath
-import           GHC.Generics               (Generic)
-import           Slick
-
+import Control.Lens ((?~), at)
+import Control.Monad (void)
+import Data.Aeson (FromJSON, ToJSON, Value (Object, String), toJSON)
+import Data.Aeson.Lens (_Object)
 import qualified Data.HashMap.Lazy as HML
-import qualified Data.Text                  as T
+import qualified Data.Text as T
+import Data.Time
+  ( UTCTime, defaultTimeLocale, formatTime, getCurrentTime
+  , iso8601DateFormat, parseTimeOrError)
+import Development.Shake
+  ( Action, Verbosity(Verbose), copyFileChanged, forP, getDirectoryFiles
+  , liftIO, readFile', shakeLintInside, shakeOptions, shakeVerbosity
+  , writeFile')
+import Development.Shake.Classes (Binary)
+import Development.Shake.FilePath ((</>), (-<.>), dropDirectory1)
+import Development.Shake.Forward (cacheAction, shakeArgsForward)
+import GHC.Generics (Generic)
+import Slick (compileTemplate', convert, markdownToHTML, substitute)
+
 
 ---Config-----------------------------------------------------------------------
 
@@ -131,14 +135,14 @@ toIsoDate :: UTCTime -> String
 toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
 
 buildFeed :: [Post] -> Action ()
-buildFeed posts = do
+buildFeed posts' = do
   now <- liftIO getCurrentTime
   let atomData =
         AtomData
           { title = siteTitle siteMeta
           , domain = baseUrl siteMeta
           , author = siteAuthor siteMeta
-          , posts = mkAtomPost <$> posts
+          , posts = mkAtomPost <$> posts'
           , currentTime = toIsoDate now
           , atomUrl = "/atom.xml"
           }
@@ -159,5 +163,5 @@ buildRules = do
 
 main :: IO ()
 main = do
-  let shOpts = shakeOptions { shakeVerbosity = Chatty, shakeLintInside = ["\\"]}
+  let shOpts = shakeOptions { shakeVerbosity = Verbose, shakeLintInside = ["\\"]}
   shakeArgsForward shOpts buildRules
