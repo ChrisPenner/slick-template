@@ -8,8 +8,8 @@ module Main where
 import Control.Lens ((?~), at)
 import Control.Monad (void)
 import Data.Aeson (FromJSON, ToJSON, Value (Object, String), toJSON)
+import Data.Aeson.KeyMap (union)
 import Data.Aeson.Lens (_Object)
-import qualified Data.HashMap.Lazy as HML
 import qualified Data.Text as T
 import Data.Time
   ( UTCTime, defaultTimeLocale, formatTime, getCurrentTime
@@ -42,7 +42,7 @@ outputFolder = "docs/"
 --Data models-------------------------------------------------------------------
 
 withSiteMeta :: Value -> Value
-withSiteMeta (Object obj) = Object $ HML.union obj siteMetaObj
+withSiteMeta (Object obj) = Object $ union obj siteMetaObj
   where
     Object siteMetaObj = toJSON siteMeta
 withSiteMeta _ = error "only add site meta to objects"
